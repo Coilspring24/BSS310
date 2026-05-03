@@ -22,5 +22,3 @@ To ensure clear boundaries for the production system, the scope is defined by th
 
 * Topographical site surveying and physical field installation of the hardware (Logistics Portfolio).
 * Execution of long-term market expansion and customer acquisition strategies (Marketing Portfolio).
-
-
