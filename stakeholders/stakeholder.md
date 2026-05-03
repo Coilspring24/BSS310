@@ -1,10 +1,20 @@
-## Stakeholders by Category
+# Stakeholders by Category
 
+## Internal
 ### Shareholders / Investors
 
 * Founders
 * Venture Capital: Chanzo Capital
 
+### Employees
+
+* Management team
+* Product development team
+* Marketing team
+* Logistics team
+* Finance and administration staff
+
+## External
 ### Financiers
 
 * Bank / lender
@@ -27,14 +37,6 @@
 
 * DigiKey
 * Mouser
-
-### Employees
-
-* Management team
-* Product development team
-* Marketing team
-* Logistics team
-* Finance and administration staff
 
 ### Regulators / Government
 
