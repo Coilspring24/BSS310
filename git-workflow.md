@@ -1,3 +1,366 @@
+You **cannot fully guarantee no conflicts** if both of you push directly to `main`.
+
+But you can reduce conflicts massively by using the correct Git flow:
+
+```text
+Always update your local main before you start working.
+Commit your own work locally.
+Pull/rebase the latest main before pushing.
+Resolve conflicts locally if needed.
+Then push.
+```
+
+# Best direct-to-main workflow
+
+Use this every time before you work:
+
+```bash
+git switch main
+git pull --rebase origin main
+```
+
+Then do your work.
+
+Check what changed:
+
+```bash
+git status
+```
+
+Stage and commit:
+
+```bash
+git add .
+git commit -m "Describe what you changed"
+```
+
+Before pushing, update again:
+
+```bash
+git pull --rebase origin main
+```
+
+Then push:
+
+```bash
+git push origin main
+```
+
+That is the basic safe loop.
+
+# The full daily workflow
+
+## 1. Start work
+
+```bash
+git switch main
+git pull --rebase origin main
+```
+
+## 2. Edit files
+
+Make your changes.
+
+## 3. Check changes
+
+```bash
+git status
+git diff
+```
+
+## 4. Commit your work
+
+```bash
+git add .
+git commit -m "Add landing page hero section"
+```
+
+## 5. Re-sync before push
+
+```bash
+git pull --rebase origin main
+```
+
+## 6. Push
+
+```bash
+git push origin main
+```
+
+# Why `pull --rebase`?
+
+Avoid this as your normal workflow:
+
+```bash
+git pull origin main
+```
+
+That can create messy merge commits like:
+
+```text
+Merge branch 'main' of github.com:...
+```
+
+Prefer:
+
+```bash
+git pull --rebase origin main
+```
+
+This takes your local commits, updates `main`, then replays your commits on top.
+
+Cleaner history:
+
+```text
+A---B---C---your commit
+```
+
+Instead of:
+
+```text
+A---B---C
+     \   \
+      D---Merge commit
+```
+
+# Set this permanently
+
+Run this once:
+
+```bash
+git config --global pull.rebase true
+git config --global rebase.autoStash true
+```
+
+Now this:
+
+```bash
+git pull
+```
+
+will behave like:
+
+```bash
+git pull --rebase
+```
+
+And if you have uncommitted changes, Git will try to temporarily stash them during the rebase.
+
+# If Git says your branch is behind
+
+Example:
+
+```text
+Updates were rejected because the remote contains work that you do not have locally.
+```
+
+Do:
+
+```bash
+git pull --rebase origin main
+git push origin main
+```
+
+# If there is a conflict
+
+Git may show something like:
+
+```text
+CONFLICT (content): Merge conflict in index.html
+```
+
+Open the file. You will see:
+
+```text
+<<<<<<< HEAD
+your version
+=======
+their version
+>>>>>>> main
+```
+
+Edit the file manually so it contains the correct final version.
+
+Then:
+
+```bash
+git add index.html
+git rebase --continue
+```
+
+After the rebase finishes:
+
+```bash
+git push origin main
+```
+
+# If you panic during a rebase
+
+Abort and return to how things were:
+
+```bash
+git rebase --abort
+```
+
+Then ask what happened before doing anything destructive.
+
+# Rules you and your friend should follow
+
+## Rule 1: Pull before editing
+
+Before starting:
+
+```bash
+git pull --rebase origin main
+```
+
+## Rule 2: Pull before pushing
+
+Before pushing:
+
+```bash
+git pull --rebase origin main
+```
+
+## Rule 3: Do not both edit the same file at the same time
+
+Conflicts usually happen when both people edit the same lines in the same file.
+
+Example danger files:
+
+```text
+index.html
+server.js
+README.md
+package.json
+```
+
+Split work clearly:
+
+```text
+Person A: frontend / public/index.html
+Person B: backend / server.js
+```
+
+Or:
+
+```text
+Person A: landing page
+Person B: dashboard
+```
+
+## Rule 4: Commit small changes often
+
+Bad:
+
+```bash
+git commit -m "changed everything"
+```
+
+Good:
+
+```bash
+git commit -m "Add dashboard status cards"
+git commit -m "Update websocket alert handler"
+git commit -m "Fix mobile navbar spacing"
+```
+
+Small commits are easier to rebase and fix.
+
+## Rule 5: Never use force push on main
+
+Avoid:
+
+```bash
+git push --force
+```
+
+Especially on `main`.
+
+If you absolutely need it, use this safer version:
+
+```bash
+git push --force-with-lease
+```
+
+But for your current setup: **do not force push to main**.
+
+# Recommended safer workflow
+
+Even better: do not both push directly to `main`.
+
+Use branches:
+
+```bash
+git switch main
+git pull --rebase origin main
+git switch -c landing-page-update
+```
+
+Work, commit, push:
+
+```bash
+git add .
+git commit -m "Update landing page"
+git push -u origin landing-page-update
+```
+
+Then open a Pull Request on GitHub.
+
+This is much safer because GitHub shows conflicts before merging.
+
+# Minimal command cheat sheet
+
+## Before work
+
+```bash
+git switch main
+git pull --rebase origin main
+```
+
+## Save work
+
+```bash
+git status
+git add .
+git commit -m "Message"
+```
+
+## Before push
+
+```bash
+git pull --rebase origin main
+git push origin main
+```
+
+## Conflict resolved
+
+```bash
+git add .
+git rebase --continue
+git push origin main
+```
+
+## Abort rebase
+
+```bash
+git rebase --abort
+```
+
+# Best setup for your case
+
+Since you are both working on `main`, use this as your golden rule:
+
+```bash
+git pull --rebase origin main
+# work
+git add .
+git commit -m "Clear message"
+git pull --rebase origin main
+git push origin main
+```
+
+That is the cleanest direct-to-main Git operation flow.
 Yes. **Branches are better** than both pushing directly to `main`.
 
 You cannot guarantee **zero** merge conflicts, but branches make conflicts safer because you resolve them **before** they reach `main`.
